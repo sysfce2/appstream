@@ -132,3 +132,10 @@ void ComponentBox::sortByScore()
 {
     as_component_box_sort_by_score(d->m_cbox);
 }
+
+ComponentBox::iterator ComponentBox::erase(iterator it)
+{
+    GPtrArray *array = as_component_box_array(it.data->d->m_cbox);
+    g_ptr_array_remove_index(array, it.index);
+    return it;
+}

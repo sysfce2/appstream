@@ -315,6 +315,36 @@ as_component_box_add (AsComponentBox *cbox, AsComponent *cpt, GError **error)
 }
 
 /**
+ * as_component_box_remove:
+ * @cbox: An instance of #AsComponentBox.
+ * @index: The position with the #AsComponent to remove.
+ *
+ * Removes a component from the box.
+ *
+ * Returns: %TRUE on success.
+ */
+gboolean
+as_component_box_remove_at (AsComponentBox *cbox, guint index)
+{
+	AsComponentBoxPrivate *priv = GET_PRIVATE (cbox);
+	gpointer cpt = g_ptr_array_remove_index(cbox->cpts, index);
+	if (!cpt) {
+		return FALSE;
+	}
+
+	if (!as_flags_contains (priv->flags, AS_COMPONENT_BOX_FLAG_NO_CHECKS)) {
+		const gchar *data_id = as_component_get_data_id (AS_COMPONENT(cpt));
+		gpointer hash_cpt = g_hash_table_lookup (priv->cpt_map, data_id);
+		if (hash_cpt != NULL) {
+			g_hash_table_remove(priv->cpt_map, data_id);
+		}
+	}
+
+	g_object_unref(cpt);
+	return cpt != NULL;
+}
+
+/**
  * as_component_box_clear:
  * @cbox: An instance of #AsComponentBox.
  *
